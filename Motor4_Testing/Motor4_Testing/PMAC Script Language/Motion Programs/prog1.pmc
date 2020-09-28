@@ -1,0 +1,56 @@
+// Power PMAC PROGRAM Template.
+// The following Sample PROGRAM is the standard template for creating Motion Programs.
+// Sample PROGRAM
+/****************************************/
+// open prog 1
+// --------------------User Code Goes Here------------------------
+
+open PROG 1
+
+contador = 1
+
+//Follower Synchronism Testing
+
+DWELL 0
+ABS
+
+//Back to Zero
+
+Motor[1].JogSpeed = 10
+
+TA 100	// msec
+TS 50 // msec
+
+
+linear
+X 0
+
+gather.enable = 2
+
+
+//LINEAR MOVEMENT
+
+while (contador <= 5)
+
+{
+
+X -10
+
+call Timer(2)
+
+X 10 
+
+call Timer(2)
+
+contador = contador +1
+
+}
+
+
+DWELL 0
+gather.enable = 0
+
+
+close
+/****************************************/
+

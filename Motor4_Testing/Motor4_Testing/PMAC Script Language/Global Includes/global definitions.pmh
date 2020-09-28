@@ -1,0 +1,26 @@
+
+//Global Settings
+
+undefine all
+
+Sys.WpKey = $AAAAAAAA //Command used when a write-protected register must be used in a write operation Register: Gate3[i].WpKey. 
+Sys.MaxCoords = 16 //Specifies the maximum number of coordinate systems that may be used, 4 as a suggested value found in the manual. It’s suggested to use no more than the value that really being used. 
+Sys.MaxMotors = 16 //Specifies the maximum number of motors that may be used. 16 as a suggested value found in the manual. 10 Could be used in this case? It’s suggested to use no more than the value that really being used. 
+ 
+PowerBrick[0].PhaseFreq = 10000 //Defines the phase frequency. Using 10000 by default. 
+PowerBrick[0].ServoClockDiv = 1 //Defines the servo frequency divider as 1, this property will be used later. 
+
+Sys.RtIntPeriod = 0 //Specifies the period of the “real-time interrupt” for Power PMAC. The real-time interrupt occurs every (Sys.RtIntPeriod + 1) servo interrupts. At the default value of 0, a real-time interrupt occurs every servo interrupt. 
+Sys.ServoPeriod = 1000 * (PowerBrick[0].ServoClockDiv + 1)/ PowerBrick[0].PhaseFreq //Defines the servo period in miliseconds, in this case will case a Servo frequency of 5000, which is a good default value. 
+Sys.PhaseOverServoPeriod = 1 / (PowerBrick[0].ServoClockDiv + 1) //Related to the bandwidth it tells the phase update’s interpolation algorithm what fraction of a servo cycle to interpolate each phase cycle. In this case it’s used 0,5. 
+
+global george = 0
+
+global contador = 1
+global GantryMode = 0
+
+
+
+
+
+

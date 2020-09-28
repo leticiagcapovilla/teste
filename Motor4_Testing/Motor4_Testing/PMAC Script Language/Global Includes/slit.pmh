@@ -1,0 +1,23 @@
+// gobal defs for CS 3 forward inverse and PLC
+
+// These are set by motor_in_cs.template
+//#define J1MOVE P(4700+3) //This isn't set by this template!
+#define M2MRES P(4800+2)
+#define M2OFF  P(4900+2)
+//#define J2MOVE P(4700+4) //This isn't set by this template!
+#define M4MRES P(4800+4)
+#define M4OFF  P(4900+4)
+
+//#######################################################
+//# dls stuff, i don't know if lnls will use it by now...
+//#######################################################
+
+// This is the distance between the 2 jacks when they are in the zero position
+//#define DIST Coord[3].Q[20]
+//DIST = 1000
+// This is the distance from jack 1 to pivot point of the surface
+//#define PIVOT Coord[3].Q[21]
+//PIVOT = 500
+// This is the depth of the surface on the mount
+//#define DEPTH Coord[3].Q[22]
+//DEPTH = 0

@@ -1,0 +1,32 @@
+//====================================================================================
+// Power PMAC Script Forward Kinematic Program (.kin)
+// Folder: "PMAC Script Language\Kinematic Routines"
+//====================================================================================
+//open forward (1)      // Put Coordinate System number inside "(cs)"
+// --------------------User Code Goes Here------------------------
+
+
+// Setup for program // Auto-assigned variable declarations
+
+// Variable name substitutions (automatically made by IDE)
+//#define KinPosMotor1 L1
+//#define KinPosMotor2 L2
+//#define KinPosAxisX C6
+//#define KinPosAxisY C7
+//#define KinAxisUsed D0
+
+// Forward-kinematic program buffer for repeated execution
+
+&1
+open forward
+	KinPosAxisX = (KinPosMotor4 - KinPosMotor2)/2;
+	KinPosAxisY = KinPosMotor4 + KinPosMotor2;
+close
+
+#2->I
+#4->I
+
+open inverse
+	KinPosMotor2 = -(KinPosAxisX) + (KinPosAxisY/2);
+	KinPosMotor4 = KinPosAxisX + (KinPosAxisY/2);
+close

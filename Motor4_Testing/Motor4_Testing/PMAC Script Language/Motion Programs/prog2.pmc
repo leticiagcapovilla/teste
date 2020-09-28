@@ -1,0 +1,105 @@
+// Power PMAC PROGRAM Template.
+// The following Sample PROGRAM is the standard template for creating Motion Programs.
+// Sample PROGRAM
+/****************************************/
+// open prog 1
+// --------------------User Code Goes Here------------------------
+
+global startingtime = 0
+global finishtime = 0
+global pos2start = 0
+global pos2finish = 0
+global pos4start = 0
+global pos4finish = 0
+global vel2start = 0
+global vel2finish = 0
+global vel4start = 0
+global vel4finish = 0
+
+OPEN PROG 2
+
+contador = 0
+
+//Teste de Velocidade
+
+//HOME 4
+DWELL 0
+ABS
+
+TA 50	// msec
+TS 10 // msec
+
+rapid
+x 0 y 0
+
+call Timer(2)
+
+Gather.enable = 0 //Finish any previous data gathering
+
+/*
+Gather.Type[0]=0 //Set data from address 0 as 32-bit integer
+Gather.Type[1]=5 //Set data from address 0 as double-64 bit
+Gather.Type[2]=5 //Set data from address 0 as double-64 bit
+Gather.Type[3]=5 //Set data from address 0 as double-64 bit
+Gather.Type[4]=5 //Set data from address 0 as double-64 bit
+Gather.Type[5]=5 //Set data from address 0 as double-64 bit
+*/
+
+Gather.addr[0]=Sys.Time.a //Must multiply by Servo Period / 1000
+Gather.addr[1]=Motor[2].ActPos.a //Set the motor 2 position value to address 1, second column of the data file.
+Gather.addr[2]=motor[4].ActPos.a //Set the motor 4 position value to address 2, second column of the data file.
+Gather.addr[3]=Motor[2].ActVel.a //Set the motor 2 velocity value to address 3, second column of the data file.
+Gather.addr[4]=motor[4].ActVel.a //Set the motor 4 velocity value to address 4, second column of the data file.
+
+Gather.items=5 //Number of items get
+Gather.Period=2 //Keeps the servo period as defined
+
+Gather.enable = 3; dwell 0 //Start data gathering the desired information as set before
+
+startingtime = Sys.time
+pos2start = motor[2].actpos
+pos4start = motor[4].actpos
+vel2start = motor[2].actvel
+vel4start = motor[4].actvel
+
+call Timer(2)
+
+linear
+FRAX(X)                  
+
+while (contador <= 1)
+
+{
+X 20000 Y 20000
+
+call Timer(2)
+
+X 0 Y 0
+
+call Timer(2)
+
+X 20000 Y 20000
+
+call Timer(2)
+
+X 0 Y 0
+
+contador = contador + 1
+}
+
+dwell 100
+gather.enable = 0; dwell 0 //Finishes data gathering
+
+enable plc GATHERPLC
+
+finishtime = Sys.time - startingtime
+pos2finish = motor[2].actpos
+pos4finish = motor[1].actpos
+vel2finish = motor[2].actvel
+vel4finish = motor[1].actvel
+
+CLOSE
+
+motor[2].jogspeed
+motor[2].actvel
+motor[2].jogvel

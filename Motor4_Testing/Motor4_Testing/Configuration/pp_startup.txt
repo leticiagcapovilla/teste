@@ -1,0 +1,2 @@
+enable plc PowerOnResetPLC
+enable plc 18

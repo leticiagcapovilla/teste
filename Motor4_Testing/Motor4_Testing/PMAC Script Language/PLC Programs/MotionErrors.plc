@@ -1,0 +1,29 @@
+// Power PMAC Script PLC Program Template.
+// The following Sample PLC PROGRAM is the standard template for creating Script PLC Programs.
+// Sample PLC PROGRAM
+/****************************************/
+// open plc 1
+// --------------------User Code Goes Here------------------------
+GLOBAL MovError = 0
+Global MovError2 = 0
+GLOBAL VelError = 0
+
+OPEN PLC SyncTestPLC
+
+//Synchronism Test Variable Definitions
+
+//Position Error
+MovError = (PowerBrick[0].Chan[3].ServoCapt - PowerBrick[0].Chan[1].ServoCapt)/256
+
+MovError2 = 100000*(PowerBrick[0].Chan[3].ServoCapt - PowerBrick[0].Chan[1].ServoCapt)/256 // x 10^5 To see in the same axis as the position.
+
+//Velocity Error
+VelError = (Motor[4].ActVel - Motor[2].ActVel)
+
+
+//Keep running to update variables
+
+//DISABLE PLC SyncTestPLC 
+
+
+close

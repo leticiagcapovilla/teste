@@ -1,0 +1,35 @@
+// Power PMAC PROGRAM Template.
+// The following Sample PROGRAM is the standard template for creating Motion Programs.
+// Sample PROGRAM
+/****************************************/
+// open prog 1
+// --------------------User Code Goes Here------------------------
+
+open prog 10
+
+DWELL 0
+ABS
+
+TA 50	// msec
+TS 10 // msec
+
+call Timer(2)
+ 
+Gather.enable=3; dwell 0
+
+//Q1 = Offset
+//Q2 = GAP
+
+frax(X,Y)
+
+linear
+
+X (-Q1 +Q2/2) Y (Q1 + Q2/2)
+
+dwell 100
+gather.enable = 0; dwell 0 //Finishes data gathering
+
+
+close
+/****************************************/
+

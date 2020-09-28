@@ -1,0 +1,56 @@
+// Power PMAC Script PLC Program Template.
+// The following Sample PLC PROGRAM is the standard template for creating Script PLC Programs.
+// Sample PLC PROGRAM
+/****************************************/
+// open plc 1
+// --------------------User Code Goes Here------------------------
+
+open plc GantryModePLC
+
+kill 1
+Kill 2
+Call Timer(0.050)
+
+if (GantryMode == 0)
+
+{
+
+Motor[2].ServoCtrl=1
+Motor[2].CmdMotor=0
+
+}
+
+if (GantryMode == 1) //Normal Gantry Mode - Motor 4 as Leader, Motor 2 as Follower
+
+{
+
+Motor[2].ServoCtrl=8
+Motor[2].CmdMotor=2
+Motor[2].GantrySlewRate=10000
+
+}
+
+if (GantryMode == 2) //Cross-Couple Gantry Mode
+
+{
+
+Motor[2].ServoCtrl=8
+Motor[2].CmdMotor=1
+
+Motor[2].Ctrl = Sys.GantryXCtrl
+Motor[2].ExtraMotors = 1
+
+}
+
+kill 1
+Kill 2
+
+Call Timer(1)
+
+jog/1
+jog/2
+
+DISABLE PLC GantryModePLC
+
+close
+/****************************************/

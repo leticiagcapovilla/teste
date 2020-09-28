@@ -1,0 +1,42 @@
+// Power PMAC PROGRAM Template.
+// The following Sample PROGRAM is the standard template for creating Motion Programs.
+// Sample PROGRAM
+/****************************************/
+// open prog 1
+// --------------------User Code Goes Here------------------------
+
+
+
+//Velocity Testing
+
+
+OPEN PROG 6
+
+DWELL 0
+ABS
+
+
+TA 25	// msec
+TS 5 // msec
+
+
+gather.enable = 2
+
+rapid
+y 20 
+
+y 40
+y -40
+
+y  20
+
+DWELL 0
+
+gather.enable = 0
+
+CLOSE
+
+
+close
+/****************************************/
+

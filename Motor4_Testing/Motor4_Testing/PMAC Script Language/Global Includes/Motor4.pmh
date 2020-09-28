@@ -1,0 +1,173 @@
+// Clocks – Clocking Speeds and parameters must be set. 
+
+PowerBrick[0].Chan[3].PwmFreqMult = 3 //Defines the PWM frequency multiplier for motor 2 (channel 1). The PWM frequency is determined by the equation: Fpwm = ((PwmFreqMult +1)/2 )*(Fphase). So, in this case it is equal to 20000. 
+
+
+//Data packing, it allows the CPU to access all bits of the 10-bit registers where the monitored data is stored. Knowing this value might be important for the general coding. Setting it to 0 will cause the Unpack.  
+
+ 
+//Output Data 
+
+  
+PowerBrick[0].Chan[0].PackOutData = 0 // Channel #1 Unpack Output Data 
+PowerBrick[0].Chan[1].PackOutData = 0 // Channel #2 Unpack Output Data 
+PowerBrick[0].Chan[2].PackOutData = 0 // Channel #3 Unpack Output Data 
+PowerBrick[0].Chan[3].PackOutData = 0 // Channel #4 Unpack Output Data 
+PowerBrick[1].Chan[0].PackOutData = 0 // Channel #5 Unpack Output Data 
+PowerBrick[1].Chan[3].PackOutData = 0 // Channel #6 Unpack Output Data 
+PowerBrick[1].Chan[2].PackOutData = 0 // Channel #7 Unpack Output Data 
+PowerBrick[1].Chan[3].PackOutData = 0 // Channel #8 Unpack Output Data 
+
+//Input Data 
+
+PowerBrick[0].Chan[0].PackInData = 0 // Channel #1 Unpack Input Data 
+PowerBrick[0].Chan[1].PackInData = 0 // Channel #2 Unpack Input Data 
+PowerBrick[0].Chan[2].PackInData = 0 // Channel #3 Unpack Input Data 
+PowerBrick[0].Chan[3].PackInData = 0 // Channel #4 Unpack Input Data 
+PowerBrick[1].Chan[0].PackInData = 0 // Channel #5 Unpack Input Data 
+PowerBrick[1].Chan[3].PackInData = 0 // Channel #6 Unpack Input Data 
+PowerBrick[1].Chan[2].PackInData = 0 // Channel #7 Unpack Input Data 
+PowerBrick[1].Chan[3].PackInData = 0 // Channel #8 Unpack Input Data 
+
+
+//Motor 2
+
+
+//Amp mode 
+
+BrickLV.Chan[3].TwoPhaseMode = 1 // Motor #1 output mode definition, 1 for Stepper Motors and 0 for brushless/brush motors. 
+
+//Pwmsf PWM scaling factor, it depends on the voltage that is applied to the DC bus and to the motor. If it is equal than it’s used the following configuration. Consult Power PMAC LV Manual, at page 124 to check the numbers. 
+
+Motor[4].PwmSf = 0.95 * 16384 
+
+//I2T Current Integration and Safety – Control of current sending to motors. The Power Brick LV can be set up to fault a motor if the time-integrated current levels exceed a certain threshold. This can protect the motor (and drive) from damage due to overheating. It integrates the square of current over time – commonly known as I2T ("eye-squared-tee") protection. 
+
+// Motor 2 
+
+GLOBAL Ch4MaxAdc = 33.85; // Max ADC reading [A peak] -–User Input. 33.85 as a default value for the 5 A/ 15 configuration. Consult the Power PMAC LV manual, page 128. 
+GLOBAL Ch4RmsPeakCur = 4.2; // RMS Peak Current [A rms] -–User Input - Datasheet 
+GLOBAL Ch4RmsContCur = 2.1; // RMS Continuous Current [A rms] --User Input 
+GLOBAL Ch4TimeAtPeak = 1; // Time Allowed at peak [sec] --User Input 
+
+//The previous definitions are based on the motors parameters and safety conditions. 
+// Motor 2 – The following code is suggested in the manual, taking it as default. 
+
+
+Motor[4].MaxDac = Ch4RmsPeakCur * 40132.44 / Ch4MaxAdc 
+Motor[4].I2TSet = Ch4RmsContCur * 40132.44 / Ch4MaxAdc 
+Motor[4].I2tTrip = (POW(Motor[4].MaxDac,2) - POW(Motor[4].I2TSet,2)) * Ch4TimeAtPeak 
+Motor[4].IdCmd = Motor[4].I2TSet / 2 
+
+
+//ECT Encoder Table – Conversion of the data structure received by the encoders to absolute position values. Each Encoder configuration needs a different encoder table type, consult the manual in order to get the suitable one. 
+
+//Encoder Table - Direct Micro stepping Configuration – For OPEN LOOP 
+
+EncTable[4].type = 11 
+EncTable[4].pEnc = Motor[4].PhasePos.a 
+EncTable[4].index1 = 5 
+EncTable[4].index2 = 0 
+EncTable[4].index3 = 0 
+EncTable[4].index4 = 0 
+EncTable[4].index5 = 255 
+EncTable[4].index6 = 1 
+EncTable[4].ScaleFactor = 1 / (256 * (EncTable[4].index5 + 1) * EXP2(EncTable[4].index1)) 
+
+//Encoder 9 – Quadrature Encoder Configuration – CLOSED LOOP 
+
+EncTable[9].type = 1 
+EncTable[9].pEnc = PowerBrick[0].Chan[3].ServoCapt.a 
+EncTable[9].pEnc1 = Sys.Pushm 
+EncTable[9].index1 = 0 
+EncTable[9].index2 = 0
+EncTable[9].index3 = 0 
+EncTable[9].index4 = 0 
+EncTable[9].index5 = 0 
+EncTable[9].ScaleFactor = 1/256
+
+//Motors Setup 
+
+//Motor 4 – AdvGain will change if is operating on Open Loop or Closed Loop 
+
+Motor[4].pEnc = EncTable[9].a // EncTable[4] if Open Loop and EncTable[9] if closed loop 
+Motor[4].pEnc2 = EncTable[9].a // EncTable[4] if Open Loop and EncTable[9] if closed loop 
+  
+
+Motor[4].ServoCtrl = 1 
+Motor[4].AdcMask = $FFFC0000 
+Motor[4].pLimits = PowerBrick[0].Chan[3].Status.a // disabled: 0 enabled: PowerBrick[0].Chan[3].Status.a  
+Motor[4].AmpFaultLevel = 1 
+Motor[4].PhaseOffset = 512 
+Motor[4].PhaseCtrl = 6 
+Motor[4].PhaseMode = 1 
+Motor[4].PhasePosSf = 0 
+Motor[4].pAbsPhasePos = PowerBrick[0].Chan[3].PhaseCapt.a 
+Motor[4].PowerOnMode = 2 
+Motor[4].FatalFeLimit = 200000 
+Motor[4].WarnFeLimit = Motor[4].FatalFeLimit/100 
+Motor[4].Servo.MaxPosErr= 200000 
+Motor[4].SlipGain = Sys.PhaseOverServoPeriod / (Motor[4].Stime + 1) 
+
+  
+//open Loop AdvGain: 
+
+//Motor[4].AdvGain = 1/16*Sys.PhaseOverServoPeriod*(0.25/Sys.ServoPeriod/Sys.PhaseOverServoPeriod) 
+
+  
+//Closed Loop AdvGain: 
+
+Motor[4].AdvGain = 1/16*Sys.PhaseOverServoPeriod*(0.25/Sys.ServoPeriod/Sys.PhaseOverServoPeriod)*102400/2500
+  
+/*
+//Open loop gains  
+
+Motor[4].Servo.Kp = (1) 
+Motor[4].Servo.Kvff = (1) 
+Motor[4].Servo.Kaff = (1) 
+Motor[4].Servo.Kvfb = (0) 
+Motor[4].Servo.Ki = (0) 
+Motor[4].Servo.Kvifb = (0) 
+Motor[4].Servo.Kviff = (0) 
+*/
+  
+
+//The following parameters were defined by Tune and observation of the motor behavior. 
+
+
+Motor[4].IiGain=2
+Motor[4].IpfGain=9
+Motor[4].IpbGain=9
+  
+
+//Closed Loop Gains – The IDE Tune tool is used to check and get these parameters, as they are changed to find the best response and configuration. 
+
+Motor[4].Servo.Kp = 0.15
+Motor[4].Servo.Kvff = 13
+Motor[4].Servo.Kaff = 300
+Motor[4].Servo.Kvfb = 3 
+Motor[4].Servo.Ki = 0
+Motor[4].Servo.Kvifb = 0 
+Motor[4].Servo.Kviff = 0 
+
+
+//Jog Settings
+
+Motor[4].JogSpeed = 10 
+Motor[4].JogTa = 500 
+Motor[4].JogTs = 250
+Motor[4].AbortTa = 100 
+Motor[4].AbortTs = 1
+
+//Motor 10 
+
+Motor[10].pEnc = EncTable[10].a 
+Motor[10].pEnc2 = EncTable[10].a 
+Motor[10].ServoCtrl = 1 
+
+//Gate – Definitions of the Encoder type and Directions (7 for positive Counter Clock-Wise response and 3 for positive Clock-wise response). 
+
+Gate3[0].EncClockDiv = 2 //Set the encoder clock as 100/(2^(ClockDiv)) MHz 
+Gate3[0].Chan[3].EncCtrl = 3 // 3: x4
+
+

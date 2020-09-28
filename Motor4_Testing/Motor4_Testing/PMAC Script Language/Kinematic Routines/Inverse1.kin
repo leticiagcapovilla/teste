@@ -1,0 +1,32 @@
+//====================================================================================
+// Power PMAC Script Inverse Kinematic Program (.kin)
+// Folder: "PMAC Script Language\Kinematic Routines"
+//====================================================================================
+//open inverse (1)      // Put Coordinate System number inside "(cs)"
+// --------------------User Code Goes Here------------------------
+
+// Setup for program 
+ 
+csglobal InvKinErr
+
+InvKinErr=0;
+
+&1  // Address CS1 for axis definitions 
+#4->I  // Motor 4 assigned to inverse kinematic axis in CS 1 
+#2->I  // Motor 2 assigned to inverse kinematic axis in CS 1 
+
+// Auto-assigned variable declarations // (Also uses variables declared in forward-kinematic example) 
+
+// Inverse-kinematic algorithm to be executed repeatedly 
+&1
+
+// Open buffer, clear contents
+open inverse
+ 
+     
+KinPosMotor2 = -(KinPosAxisX) + (KinPosAxisY/2);
+KinPosMotor4 = KinPosAxisX + (KinPosAxisY/2);
+
+
+close
+//====================================================================================

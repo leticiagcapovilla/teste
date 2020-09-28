@@ -1,0 +1,7 @@
+[PMAC_HARDWARE]
+[PMAC_CONFIG]
+[PMAC_PROJECT]
+/var/ftp/usrflash/Project/Configuration/pp_startup.txt:3:5: error #47: SERVO REQUEST ACTIVE: &1#2j/
+Error: downloading preprocessed File: "/var/ftp/usrflash/Temp/pp_proj.pma"
+[PMAC_PROJECT]
+[PMAC_PROJECT]

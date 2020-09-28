@@ -1,0 +1,49 @@
+// Power PMAC Script PLC Program Template.
+// The following Sample PLC PROGRAM is the standard template for creating Script PLC Programs.
+// Sample PLC PROGRAM
+/****************************************/
+// open plc 1
+// --------------------User Code Goes Here------------------------
+GLOBAL Motor2Homed //Global Variable to indicate whether the motor have a reference position or not, in other words, homed. This variable may be checked by another script, so it’s necessary to be global. 
+GLOBAL Motor2HomeSpeed = 5 //Global Variable to attribute 50 m.u. as speed for any desirable speed property (like Jog Speed).  
+GLOBAL Motor2HomeOffset = 175000
+
+
+//Homing Motor 2
+
+OPEN PLC Homing2PLC //Opening of the Homing Code. 
+ 
+Sys.WpKey = $AAAAAAAA //Command used when a write-protected register must be used in a write operation Register: Gate3[i].WpKey. 
+ 
+Motor2Homed = 0 //Indicates that the motor is not homed, and the homing routine can start. 
+
+Motor[2].HomeOffset = Motor2HomeOffset
+
+Motor[2].JogSpeed = Motor2HomeSpeed //The jog speed (the speed of a fast move) is set as the value from Mortor2HomeSpeed, 50 m.u. in this case. 
+
+jog- 2 //Jog movement for motor 2 
+
+CALL Timer(0.5) //Delay is called to avoid any error. 
+
+while (Motor[2].MinusLimit == 0 || Motor[2].DesVelZero == 0) //The motor will move until reach the positive limit, then a signal will be sent and to Motor[i].PlusLimit as 1. When the motor reach limit, also the velocity must be 0, so it’s possible to do another condition check with DesVelZero equal to 0. 
+
+       {} 
+
+Motor[2].HomeVel = Motor2HomeSpeed //After reaching the limit, the motor is sent back, giving negative speed to the motor by multiplying HomeSpeed by -1. 
+
+home 2 //Flag that will cause the following motor (in this case motor 2) to search home, finding the reference bar of the encoder after going back. 
+ 
+CALL Timer(0.5) //Delay is called to avoid any error, more time is given to wait the homing be complete. 
+
+while ( Motor[2].HomeInProgress == 1 || Motor[2].HomeComplete == 0 || Motor[2].DesVelZero == 0) //The code is hold while homing is in progress. 
+       {} 
+homez 2 //A zero-move homing is made by motor 2. It indicates the home reference position as zero. 
+homez 10
+
+Motor2Homed = 1 //The variable that indicates the motor is homed is set true. 
+
+DISABLE PLC Homing2PLC //The routine loop is finished. 
+
+CLOSE //The Script is closed. 
+
+  

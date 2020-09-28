@@ -1,0 +1,41 @@
+GLOBAL Motor4Homed //Global Variable to indicate whether the motor have a reference position or not, in other words, homed. This variable may be checked by another script, so it’s necessary to be global. 
+GLOBAL Motor4HomeSpeed = 5 //Global Variable to attribute 50 m.u. as speed for any desirable speed property (like Jog Speed).  
+GLOBAL Motor4HomeOffset = 175000
+
+//Homing Motor 1
+
+OPEN PLC HomingPLC //Opening of the Homing Code. 
+ 
+Sys.WpKey = $AAAAAAAA //Command used when a write-protected register must be used in a write operation Register: Gate3[i].WpKey. 
+ 
+Motor4Homed = 0 //Indicates that the motor is not homed, and the homing routine can start. 
+
+Motor[4].HomeOffset = Motor4HomeOffset
+
+Motor[4].JogSpeed = Motor4HomeSpeed //The jog speed (the speed of a fast move) is set as the value from Mortor2HomeSpeed, 50 m.u. in this case. 
+
+jog- 4 //Jog movement for motor 4 
+
+CALL Timer(2) //Delay is called to avoid any error. 
+
+while (Motor[4].MinusLimit == 0 || Motor[4].DesVelZero == 0) //The motor will move until reach the positive limit, then a signal will be sent and to Motor[i].PlusLimit as 1. When the motor reach limit, also the velocity must be 0, so it’s possible to do another condition check with DesVelZero equal to 0. 
+
+       {} 
+
+Motor[4].HomeVel = Motor4HomeSpeed //After reaching the limit, the motor is sent back, giving negative speed to the motor by multiplying HomeSpeed by -1. 
+
+home 4 //Flag that will cause the following motor (in this case motor 2) to search home, finding the reference bar of the encoder after going back. 
+ 
+CALL Timer(0.5) //Delay is called to avoid any error, more time is given to wait the homing be complete. 
+
+while ( Motor[4].HomeInProgress == 1 || Motor[4].HomeComplete == 0 || Motor[4].DesVelZero == 0) //The code is hold while homing is in progress. 
+       {} 
+homez 4 //A zero-move homing is made by motor 4. It indicates the home reference position as zero. 
+homez 9
+
+Motor4Homed = 1 //The variable that indicates the motor is homed is set true. 
+
+DISABLE PLC HomingPLC //The routine loop is finished. 
+
+CLOSE //The Script is closed. 
+
