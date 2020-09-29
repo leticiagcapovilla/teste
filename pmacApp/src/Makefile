@@ -33,8 +33,8 @@ pmac_LIBS += motor
 pmac_LIBS += powerPmacAsynPort
 pmac_LIBS += asyn
 
-pmac_LIBS += reccaster
-pmac_DBD += reccaster.dbd
+#pmac_LIBS += reccaster
+#pmac_DBD += reccaster.dbd
 
 # pmac_registerRecordDeviceDriver.cpp derives from pmac.dbd
 pmac_SRCS += pmac_registerRecordDeviceDriver.cpp
