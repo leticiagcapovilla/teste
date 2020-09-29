@@ -34,7 +34,7 @@ BUSY = $(SYNAPPS_MODULES)/busy-R1-7-2
 CALC = $(SYNAPPS_MODULES)/calc-R3-7-3
 MOTOR = $(SYNAPPS_MODULES)/motor-R7-1
 
-MSI = /usr/local/epics-nfs/extensions/R3.14.12.8/bin/$(EPICS_HOST_ARCH)/msi
+#MSI = /usr/local/epics-nfs/extensions/R3.14.12.8/bin/$(EPICS_HOST_ARCH)/msi
 PMAC = /usr/local/epics-nfs/modules/R3.15.6/pmac
 
 # If using the sequencer, point SNCSEQ at its top directory:
