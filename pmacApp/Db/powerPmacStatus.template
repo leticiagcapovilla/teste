@@ -1,0 +1,16 @@
+# powerPmacStatus.template - device specific status PVs not compatible with PMAC
+# % macro, PORT, The asyn port for the pmac controller
+# % macro, P, PV Prefix
+
+record(longin, "$(P):CALC_SERVO_FREQ") {
+  field(DESC, "Servo Interrupt Time")
+  field(DTYP, "asynInt32")
+  field(INP, "@asyn($(PORT),0)PMAC_VIS_Sys.ServoPeriod")
+  field(SCAN, "I/O Intr")
+}
+
+record(longin, "$(P):READ_ECHO") {
+  field(DTYP, "asynInt32")
+  field(SCAN, "I/O Intr")
+  field(INP, "@asyn($(PORT),0)PMAC_VIS_ECHO")
+}
